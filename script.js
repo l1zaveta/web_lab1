@@ -158,3 +158,122 @@ function updateQuantity(productId, change) {
 function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
+
+function renderCart() {
+    const container = document.getElementById('cart-items');
+    const totalElement = document.querySelector('.total-price');
+    
+    if (cart.length === 0) {
+        container.innerHTML = '<p class="empty-cart">Корзина пуста</p>';
+        totalElement.textContent = '0 ₽';
+        return;
+    }
+    
+    let total = 0;
+    container.innerHTML = '';
+    
+    cart.forEach(item => {
+        total += item.price * item.quantity;
+        
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+            <div class="item-image">
+                <img src="${item.image}" alt="${item.name}"
+                     onerror="this.src='https://via.placeholder.com/60x60?text=Украшение'">
+            </div>
+            <div class="item-details">
+                <h4>${item.name}</h4>
+                <div class="item-price">${formatPrice(item.price)}</div>
+            </div>
+            <div class="quantity-controls">
+                <button onclick="updateQuantity(${item.id}, -1)">-</button>
+                <span class="quantity">${item.quantity}</span>
+                <button onclick="updateQuantity(${item.id}, 1)">+</button>
+            </div>
+            <button class="btn-remove" onclick="removeFromCart(${item.id})">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        container.appendChild(cartItem);
+    });
+    
+    totalElement.textContent = formatPrice(total);
+}
+
+function updateCartCount() {
+    const countElement = document.querySelector('.cart-count');
+    const totalElement = document.querySelector('.cart-total');
+    const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    countElement.textContent = total;
+    totalElement.textContent = formatPrice(totalPrice);
+}
+
+
+function toggleCart() {
+    const sidebar = document.getElementById('cart-sidebar');
+    const overlay = document.getElementById('cart-overlay');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+
+function showCart() {
+    const sidebar = document.getElementById('cart-sidebar');
+    const overlay = document.getElementById('cart-overlay');
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+}
+
+
+document.getElementById('cart-overlay').addEventListener('click', toggleCart);
+
+
+function openOrderModal() {
+    if (cart.length === 0) {
+        alert('Добавьте товары в корзину перед оформлением заказа');
+        return;
+    }
+    document.getElementById('order-modal').classList.add('active');
+}
+
+function closeOrderModal() {
+    document.getElementById('order-modal').classList.remove('active');
+    document.getElementById('order-form').reset();
+}
+
+function submitOrder(e) {
+    e.preventDefault();
+    
+    
+    const formData = {
+        firstName: document.getElementById('first-name').value,
+        lastName: document.getElementById('last-name').value,
+        address: document.getElementById('address').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        order: [...cart],
+        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+        date: new Date().toISOString()
+    };
+    
+    
+    console.log('Заказ оформлен:', formData);
+    
+    
+    const message = document.getElementById('success-message');
+    message.classList.add('active');
+    
+    setTimeout(() => {
+        message.classList.remove('active');
+    }, 3000);
+    
+    
+    cart = [];
+    saveCart();
+    renderCart();
+    updateCartCount();
+    closeOrderModal();
+}
