@@ -601,3 +601,47 @@ body {
         padding: 16px;
     }
 }
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #ffb7c5, #ff9eb5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.6rem;
+    box-shadow: 0 2px 8px rgba(255, 158, 181, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.logo-icon i {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.logo:hover .logo-icon {
+    transform: scale(1.05);
+}
+
+.logo-text h1 {
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #5a4a3a;
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
+}
+
+.logo-text p {
+    font-size: 0.75rem;
+    color: #a08e7c;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
